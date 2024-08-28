@@ -1,4 +1,4 @@
-package com.mirthin.myapplication
+package com.mirthin.photoedit
 
 import org.junit.Test
 

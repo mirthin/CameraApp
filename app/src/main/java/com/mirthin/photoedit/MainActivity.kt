@@ -1,4 +1,4 @@
-package com.mirthin.myapplication
+package com.mirthin.photoedit
 
 import android.content.Context
 import android.content.Intent
@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,10 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mirthin.myapplication.ui.theme.MyApplicationTheme
+import com.mirthin.photoedit.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +60,15 @@ fun SelectImage() {
             uri -> imageUri.value = uri
             if(uri != null) {
                 launchHandlingActivity(ctx, uri)
+            }
+        }
+    )
+    
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if(success && imageUri.value != null) {
+                launchHandlingActivity(ctx, imageUri.value!!)
             }
         }
     )
@@ -93,13 +100,16 @@ fun SelectImage() {
                     .width(120.dp)
                     .height(120.dp)
                     .clip(CircleShape),
-                onClick = {}
+                onClick = {
+                    val uri = ComposeFileProvider.getImageUri(ctx)
+                    imageUri.value = uri
+                    cameraLauncher.launch(uri)
+                }
             ) {
                 Text(text = "Camera")
             }
         }
     }
-
 }
 
 fun launchHandlingActivity(ctx : Context, uri : Uri) {
