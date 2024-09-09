@@ -1,4 +1,4 @@
-package com.mirthin.photoedit
+package com.mirthin.myapplication
 
 import android.content.Intent
 import android.net.Uri
@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,12 +29,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.drawable.toBitmap
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.mirthin.myapplication.R
-import com.mirthin.photoedit.ui.theme.MyApplicationTheme
+import com.mirthin.myapplication.ui.theme.MyApplicationTheme
 
 enum class TOOL(name: String) {
     BRIGHTNESS("Brightness"),
@@ -85,7 +89,13 @@ class EditActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize()
                     ) {
                         UtilHeader(tools = tools, currentTool = currentTool)
-                        EditImage(uri = uri)
+                        EditImage(uri = uri, brightness.value, saturation.value)
+
+                        when (currentTool.value) {
+                            TOOL.BRIGHTNESS -> ToolBrightness(brightness = brightness)
+                            TOOL.SATURATION -> ToolSaturation(saturation = saturation)
+                            null -> TODO()
+                        }
                     }
 
                 }
@@ -95,13 +105,25 @@ class EditActivity : ComponentActivity() {
 }
 
 @Composable
-fun EditImage(uri: Uri) {
+fun EditImage(uri: Uri, brightness: Float, saturation: Float) {
     val painter = rememberAsyncImagePainter(uri )
+
+    val matrixFilter = ColorMatrix()
+    matrixFilter.setToSaturation(saturation)
+    matrixFilter[0,4] = brightness
+    matrixFilter[1,4] = brightness
+    matrixFilter[2,4] = brightness
+
+    val imageState = painter.state
+    if (imageState is AsyncImagePainter.State.Success) {
+        val bitmap = imageState.result.drawable.toBitmap()
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painter = painter, contentDescription = null)
+        Image(painter = painter, contentDescription = null, colorFilter = ColorFilter.colorMatrix(matrixFilter))
     }
 }
 
@@ -134,5 +156,29 @@ fun UtilHeader(tools : List<ToolButton>, currentTool: MutableState<TOOL?>) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ToolBrightness(brightness : MutableState<Float>) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)) {
+        Text(text = "Brightness")
+        Slider(value = brightness.value,
+            onValueChange = {brightness.value = it},
+            valueRange = -255f..255f)
+    }
+}
+
+@Composable
+fun ToolSaturation(saturation : MutableState<Float>) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)) {
+        Text(text = "Saturation")
+        Slider(value = saturation.value,
+            onValueChange = {saturation.value = it},
+            valueRange = 0f..5f)
     }
 }

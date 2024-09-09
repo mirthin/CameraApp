@@ -1,4 +1,4 @@
-package com.mirthin.photoedit.ui.theme
+package com.mirthin.myapplication.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

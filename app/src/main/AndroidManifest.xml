@@ -34,7 +34,7 @@
         </activity>
         <provider
             android:name=".ComposeFileProvider"
-            android:authorities="com.mirthin.photoedit.fileprovider"
+            android:authorities="com.mirthin.myapplication.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data

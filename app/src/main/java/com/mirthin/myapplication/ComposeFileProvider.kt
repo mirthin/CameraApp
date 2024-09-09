@@ -1,4 +1,4 @@
-package com.mirthin.photoedit
+package com.mirthin.myapplication
 
 import android.content.Context
 import android.net.Uri

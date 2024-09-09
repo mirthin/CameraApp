@@ -1,4 +1,4 @@
-package com.mirthin.photoedit
+package com.mirthin.myapplication
 
 import android.content.Context
 import android.content.Intent
@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mirthin.photoedit.ui.theme.MyApplicationTheme
+import com.mirthin.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    SelectImage()
                 }
             }
         }
